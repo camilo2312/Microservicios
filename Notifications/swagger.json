@@ -1,0 +1,55 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Email API",
+        "version": "1.0.0",
+        "description": "API para enviar correos electrónicos"
+    },
+    "paths": {
+        "/send-email": {
+            "post": {
+                "summary": "Enviar un correo electrónico",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "to": {
+                                        "type": "string"
+                                    },
+                                    "subject": {
+                                        "type": "string"
+                                    },
+                                    "text": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["to", "subject", "text"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Email enviado"
+                    },
+                    "500": {
+                        "description": "Error enviando el email"
+                    }
+                }
+            }
+        },
+        "/health": {
+            "get": {
+                "summary": "Verificar salud del servicio",
+                "responses": {
+                    "200": {
+                        "description": "Servicio está funcionando"
+                    }
+                }
+            }
+        }
+    }
+}

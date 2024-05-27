@@ -1,0 +1,131 @@
+networks:
+  my-network:
+    driver: bridge
+    
+services:
+  pythonapp:
+    build: ./FirstApiPyhton/
+    command: sh -c "sleep 60s ; python3 ./main.py"
+    depends_on:
+      - mysql
+      - rabbitmq
+    ports:
+      - 6061:9091
+    networks:
+      - my-network
+
+  webapi:
+    build: ./apilogs/ApiLogs/
+    ports:
+      - "3000:8080"
+    depends_on:
+      - db
+      - rabbitmq
+    environment:
+      - ConnectionStrings__ConnectionMysql=Server=db;Database=Logs;User=root;Password=root;      
+    restart: always
+    networks:
+      - my-network
+
+  db:
+    build: ./mysql-logs/
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'Logs'
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - '3305:3306'
+    volumes:
+      - ./mysql-logs/database.sql:/docker-entrypoint-initdb.d/database.sql
+    networks:
+      - my-network
+  
+  profiles:
+    build: ./gateway/ApiGateway/ApiGateway/
+    ports:
+      - "4545:8080"
+    depends_on:
+      - db-profiles
+      - rabbitmq
+    environment:
+      - ConnectionStrings__ConnectionMysql=Server=db-profiles;Database=profiles;User=root;Password=root;      
+    restart: always
+    networks:
+      - my-network
+
+  db-profiles:
+    build: ./mysql-profiles/
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'profiles'
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - '3308:3306'
+    volumes:
+      - ./mysql-profiles/database.sql:/docker-entrypoint-initdb.d/database.sql
+    networks:
+      - my-network
+      
+  gateway:
+    build: ./ApiGateway/Gateway/Gateway/
+    ports:
+      - "2525:8080" 
+    restart: always
+    networks:
+      - my-network
+
+  mysql:
+    build: ./mysql/
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'users'
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - '3309:3306'
+    volumes:
+      - ./mysql/database_users.sql:/docker-entrypoint-initdb.d/database_users.sql
+    networks:
+      - my-network
+      
+  healthapi:
+    build: ./health/ApiHealth/ApiHealth/
+    ports:
+      - "4444:8080"
+    depends_on:
+      - db-health
+    environment:
+      - ConnectionStrings__ConnectionMysql=Server=db-health;Database=health;User=root;Password=root;      
+    restart: always
+    networks:
+      - my-network
+      
+  db-health:
+    build: ./mysql-health/
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'health'
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - '3304:3306'
+    volumes:
+      - ./mysql-health/database.sql:/docker-entrypoint-initdb.d/database.sql
+    networks:
+      - my-network
+  
+  notifications:
+    build: ./Notifications/
+    ports:
+      - "7777:8080"
+    env_file:
+      - ./Notifications/.env
+    networks:
+      - my-network
+  
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"  # puerto para la conexión AMQP
+      - "15672:15672"  # puerto para el panel de control web (opcional)
+    networks:
+      - my-network
+  

@@ -1,0 +1,465 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+      "title": "Swagger FirstApiPython - OpenAPI 3.0",
+      "description": "Primera aplicación de python, encargada de un crud básico de usuarios, así como también una lógica básica para obtener la contraseña de forma segura y l actalización de la misma",
+      "termsOfService": "http://swagger.io/terms/",
+      "contact": {
+        "email": "camiramos234@gmail.com"
+      },
+      "license": {
+        "name": "Apache 2.0",
+        "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+      },
+      "version": "0.0.1"
+    },
+    "externalDocs": {
+      "description": "Puedes ecnontrar más información de Swagger aquí",
+      "url": "http://swagger.io"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:9091"
+      }
+    ],
+    "tags": [
+      {
+        "name": "users",
+        "description": "Operaciones de usuarios"
+      },
+      {
+        "name": "Health",
+        "description": "Salud del servicio"
+      }
+    ],
+    "paths": {
+      "/users": {
+        "post": {
+          "tags": [
+            "users"
+          ],
+          "summary": "Crear usuario",
+          "description": "Permite crear usuarios de manera libre",
+          "operationId": "createUser",
+          "requestBody": {
+            "description": "Crear objeto usuario",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "responses": {
+            "default": {
+              "description": "Operacion exitosa",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "get": {
+          "tags": [
+            "users"
+          ],
+          "summary": "Obtiene todos los usuarios del sistema",
+          "description": "Obtiene todos los usuarios registrados de maner paginada",
+          "operationId": "getUsersforPage",
+          "parameters": [
+            {
+              "name": "page_number",
+              "in": "query",
+              "description": "Número de la página a visualizar",
+              "required": true,
+              "schema": {
+                "type": "number"
+              }
+            },
+            {
+              "name": "limit",
+              "in": "query",
+              "description": "Limite de datos a mostrar por página",
+              "required": true,
+              "schema": {
+                "type": "number"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Operación exitosa",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "No existen usuarios registrados"
+            },
+            "404": {
+              "description": "User not found"
+            }
+          }
+        }
+      },
+      "/login": {
+        "post": {
+          "tags": [
+            "users"
+          ],
+          "summary": "Iniciar sesión con usuario en el sistema",
+          "description": "Permite obtener el token de acceso para consumir la api",
+          "operationId": "",
+          "parameters": [
+            {
+              "name": "email",
+              "in": "query",
+              "description": "Email para el login",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "password",
+              "in": "query",
+              "description": "Contraseña para el inicio de sesion",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Operación exitosa",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Usuario o contraseña invalidos"
+            }
+          }
+        }
+      },
+      "/users/{id}": {
+        "get": {
+          "tags": [
+            "users"
+          ],
+          "summary": "Obtener usuario",
+          "description": "Permite obtener un usuario especifico mediante su cedula",
+          "operationId": "getUserForId",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "Cedula del usuario",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Operación exitosa",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            },
+            "default": {
+              "description": "successful operation"
+            }
+          }
+        },
+        "put": {
+          "tags": [
+            "users"
+          ],
+          "summary": "Update user",
+          "description": "This can only be done by the logged in user.",
+          "operationId": "updateUser",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "Cedula del usuario",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "description": "Actualiza un usuario existente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "responses": {
+            "default": {
+              "description": "successful operation"
+            }
+          }
+        },
+        "delete": {
+          "tags": [
+            "users"
+          ],
+          "summary": "Eliminar usuario",
+          "description": "Permite eliminar un usuario del sistema",
+          "operationId": "deleteUser",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "El id es necesario para eliminar el usuario",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "400": {
+              "description": "No existe usuario registrado"
+            }
+          }
+        }
+      },
+      "/users/password/{id}": {
+        "get": {
+          "tags": [
+            "users"
+          ],
+          "summary": "Obtener contraseña de usuario",
+          "description": "Permite obtener la URL para acceder a actualizar la contraseña",
+          "operationId": "getPasswordUser",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "Cedula del usuario",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Operación exitosa",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Password"
+                  }
+                }
+              }
+            },
+            "default": {
+              "description": "Operación exitosa"
+            }
+          }
+        }
+      },
+      "/users/password": {
+        "patch": {
+          "tags": [
+            "users"
+          ],
+          "summary": "Permite actualzar la contraseña del usuario",
+          "description": "Permite actualizar la contraseña del usuario mediante un token",
+          "operationId": "updatePasswordUser",
+          "responses": {
+            "200": {
+              "description": "Operación exitosa",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/PasswordUpdate"
+                  }
+                }
+              }
+            },
+            "default": {
+              "description": "Operación exitosa"
+            }
+          }
+        }
+      },
+      "/health": {
+        "get": {
+          "tags": [
+            "health"
+          ],
+          "summary": "Permite obtener la salud del servicio",
+          "description": "Permite obtener los detalles de la salud del servicip",
+          "operationId": "healthServic",
+          "responses": {
+            "200": {
+              "description": "Operación exitosa",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Health"
+                  }
+                }
+              }
+            },
+            "default": {
+              "description": "Operación exitosa"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "User": {
+          "type": "object",
+          "properties": {
+            "cedula": {
+              "type": "string",
+              "example": 111111,
+              "required": true
+            },
+            "nombre": {
+              "type": "string",
+              "example": "Pepe",
+              "required": true
+            },
+            "apellido": {
+              "type": "string",
+              "example": "Perez",
+              "required": true
+            },
+            "email": {
+              "type": "string",
+              "example": "pepe@email.com",
+              "required": true
+            },
+            "contrasena": {
+              "type": "string",
+              "example": "12345",
+              "required": true
+            }
+          }
+        },
+        "Password": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "number",
+              "example": 200
+            },
+            "token": {
+              "type": "string",
+              "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MDkzNTYzNDEsImV4cCI6MTcwOTM1OTk0MSwiY2VkdWxhIjoiMTIzNDU2Nzg5MCIsImlzcyI6ImluZ2VzaXMudW5pcXVpbmRpby5lZHUuY28ifQ.5aiBeDm4JmDQKyRsZavYKv_Mp0rrt3OpXYVoXe3IgpI"
+            },
+            "url": {
+              "type": "string",
+              "example": "http://localhost:6061/users/password"
+            }
+          }
+        },
+        "PasswordUpdate": {
+          "type": "object",
+          "properties": {
+            "new_password": {
+              "type": "string",
+              "example": "holamundo",
+              "required": true
+            }
+          }
+        },
+        "ApiResponse": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "message": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object"
+            }
+          },
+          "xml": {
+            "name": "##default"
+          }
+        }
+      },
+      "Health": {
+        "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "UP"
+            },
+            "checks": {
+              "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "example": "READY"
+                  },
+                  "version": {
+                    "type": "string",
+                    "example": "1.0"
+                  },
+                  "uptime": {
+                    "type": "string",
+                    "example": "14:00"
+                  }
+                }
+            }
+          }
+      },
+      "securitySchemes": {
+        "petstore_auth": {
+          "type": "oauth2",
+          "flows": {
+            "implicit": {
+              "authorizationUrl": "https://petstore3.swagger.io/oauth/authorize",
+              "scopes": {
+                "write:pets": "modify pets in your account",
+                "read:pets": "read your pets"
+              }
+            }
+          }
+        },
+        "api_key": {
+          "type": "apiKey",
+          "name": "api_key",
+          "in": "header"
+        }
+      }
+    }
+  }
